@@ -9,25 +9,12 @@ public class TaskDTO {
     private String description;
     private boolean isFinished;
     private int duration;
-    private Users users;
+
 
     public TaskDTO(){
 
     }
 
-    public TaskDTO(UUID idTask, String description, boolean isFinished, int duration,Users users) {
-        this.idTask = idTask;
-        this.description = description;
-        this.isFinished = isFinished;
-        this.duration = duration;
-        this.users = users;
-    }
-
-    public TaskDTO(String description, int duration) {
-        this.description = description;
-        this.duration = duration;
-        this.isFinished = false;
-    }
 
     public UUID getIdTask() {
         return idTask;

@@ -12,22 +12,14 @@ public class Users {
 
     private String name;
 
-    private Boolean status;
+    private Boolean free;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private List<Task> taskList;
+    private Boolean archived;
 
-    public Users(UUID idUser, String name, Boolean status, List<Task> taskList) {
-        this.id = idUser;
-        this.name = name;
-        this.status = status;
-    }
+    @OneToMany(targetEntity = Task.class, cascade = CascadeType.ALL,
+                fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Task> tasks;
 
-    public Users(String name, List<Task> taskList) {
-        this.status = false;
-        this.name = name;
-        this.taskList = taskList;
-    }
 
     public Users(){}
 
@@ -47,19 +39,19 @@ public class Users {
         this.name = name;
     }
 
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
     public List<Task> getTaskList() {
-        return taskList;
+        return tasks;
     }
 
     public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+        this.tasks = taskList;
+    }
+
+    public Boolean isFree() {
+        return free;
+    }
+
+    public void setFree(Boolean free) {
+        this.free = free;
     }
 }

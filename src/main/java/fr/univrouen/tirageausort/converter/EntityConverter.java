@@ -17,10 +17,13 @@ public class EntityConverter {
         UserDTO dto = new UserDTO();
         dto.setIdUser(users.getId());
         dto.setName(users.getName());
-        dto.setStatus(users.getStatus());
+        dto.setFree(users.isFree());
         List<TaskDTO> tasksDto = new ArrayList<>();
-        for (Task task: users.getTaskList()) {
-            tasksDto.add(TaskEntityToDto(task));
+        List<Task> taskList = users.getTaskList();
+        if(taskList!=null) {
+            for (Task task : taskList) {
+                tasksDto.add(TaskEntityToDto(task));
+            }
         }
         dto.setTasks(tasksDto);
 
@@ -29,7 +32,7 @@ public class EntityConverter {
 
     public TaskDTO TaskEntityToDto(Task task){
         TaskDTO dto = new TaskDTO();
-        dto.setIdTask(task.getIdTask());
+        dto.setIdTask(task.getId());
         dto.setDescription(task.getDescription());
         dto.setDuration(task.getDuration());
         dto.setFinished(task.isFinished());
@@ -41,7 +44,7 @@ public class EntityConverter {
         Users users = new Users();
         users.setId(dto.getIdUser());
         users.setName(dto.getName());
-        users.setStatus(dto.isStatus());
+        users.setFree(dto.isFree());
         List<TaskDTO> tasksDto = dto.getTasks();
         if (tasksDto!=null) {
             List<Task> tasks = new ArrayList<>();
@@ -55,11 +58,24 @@ public class EntityConverter {
 
     public Task TaskDtoToEntity(TaskDTO dto){
         Task task = new Task();
-        task.setIdTask(dto.getIdTask());
+        task.setId(dto.getIdTask());
         task.setDescription(dto.getDescription());
         task.setDuration(dto.getDuration());
         task.setFinished(dto.isFinished());
 
         return task;
+    }
+
+    public List<TaskDTO> TaskEntityToDto (List<Task> taskList) {
+
+        if(!taskList.isEmpty()){
+            List<TaskDTO> listDto = new ArrayList<>();
+            for (Task taskEntity: taskList) {
+                listDto.add(TaskEntityToDto(taskEntity));
+            }
+            return listDto;
+
+        }
+        return null;
     }
 }

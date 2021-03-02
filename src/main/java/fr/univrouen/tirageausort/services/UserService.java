@@ -4,6 +4,7 @@ import fr.univrouen.tirageausort.converter.EntityConverter;
 import fr.univrouen.tirageausort.dtos.UserDTO;
 import fr.univrouen.tirageausort.model.Users;
 import fr.univrouen.tirageausort.repositories.UserRepository;
+import fr.univrouen.tirageausort.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService implements IUserService{
+public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -29,42 +30,49 @@ public class UserService implements IUserService{
             return userDto;
         }
         else {
-            System.out.println("Rieeeeen !!!!! ");}
+            System.out.println("Rieeeeen !!!!! ");
             return null;
+        }
     }
 
     @Override
     public List<UserDTO> findAllUsers() {
         List<Users> allUsers = userRepository.findAll();
         if (!allUsers.isEmpty()) {
-        List<UserDTO> allUsersDto = new ArrayList<>();
+            List<UserDTO> allUsersDto = new ArrayList<>();
 
-        for (Users user : allUsers) {
-            UserDTO userDto = entityConverter.UserEntityToDto(user);
-            allUsersDto.add(userDto);
-            System.out.println(user.getId());
+            for (Users user : allUsers) {
+                UserDTO userDto = entityConverter.UserEntityToDto(user);
+                allUsersDto.add(userDto);
+                System.out.println(user.getId());
 
-        }
+            }
             return allUsersDto;
         }
-        else return null;
+        else
+            return null;
     }
 
     @Override
     public int getNbUsers() {
-        return 0;
+        return userRepository.findAll().size();
     }
 
     @Override
-    public void addUser(UserDTO userDto) {
-        Users users = entityConverter.UserDtoToEntity(userDto);
-        Users result = userRepository.save(users);
-        System.out.println(result.getId());
+    public UserDTO addUser(UserDTO userDto) {
+        try {
+            Users users = entityConverter.UserDtoToEntity(userDto);
+            Users result = userRepository.save(users);
+            return entityConverter.UserEntityToDto(result);
+        }
+        catch(ExceptionInInitializerError e) {
+            return null;
+        }
     }
 
     @Override
     public void deleteUserById(UUID userId) {
-
+        userRepository.deleteById(userId);
     }
 
     @Override

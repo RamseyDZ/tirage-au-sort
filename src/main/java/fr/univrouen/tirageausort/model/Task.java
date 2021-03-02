@@ -7,10 +7,12 @@ import java.util.*;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID idTask;
+    @Column(columnDefinition = "binary(16)")
+    UUID id;
 
     String description;
 
+    @Column(columnDefinition = "boolean default false")
     boolean isFinished;
 
     int duration;
@@ -23,7 +25,6 @@ public class Task {
     private Date updatedDate = new Date();
 
     @ManyToOne
-    @JoinColumn(name="user_id")
     private Users users;
 
 
@@ -31,12 +32,12 @@ public class Task {
     }
 
 
-    public UUID getIdTask() {
-        return idTask;
+    public UUID getId() {
+        return id;
     }
 
-    public void setIdTask(UUID idTask) {
-        this.idTask = idTask;
+    public void setId(UUID idTask) {
+        this.id = idTask;
     }
 
     public String getDescription() {

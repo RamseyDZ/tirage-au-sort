@@ -1,25 +1,19 @@
 package fr.univrouen.tirageausort.dtos;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class UserDTO {
     private UUID idUser;
     private String name;
-    private boolean status;
+    private boolean free;
+    private boolean archived;
     private List<TaskDTO> tasks;
 
     public UserDTO() {
 
     }
 
-    public UserDTO(UUID idUser, String name, boolean status, List<TaskDTO> tasks) {
-        this.idUser = idUser;
-        this.name = name;
-        this.status = status;
-        this.tasks = tasks;
-    }
 
     public UUID getIdUser() {
         return idUser;
@@ -37,19 +31,27 @@ public class UserDTO {
         this.name = name;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isFree() {
+        return free;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setFree(boolean free) {
+        this.free = free;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     public List<TaskDTO> getTasks() {
         return tasks;
     }
 
-        public void setTasks(List<TaskDTO> tasks) {
+    public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;
     }
 }
