@@ -4,6 +4,8 @@ import fr.univrouen.tirageausort.dtos.TaskDTO;
 import fr.univrouen.tirageausort.dtos.UserDTO;
 import fr.univrouen.tirageausort.model.Task;
 import fr.univrouen.tirageausort.model.Users;
+import fr.univrouen.tirageausort.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,7 +13,8 @@ import java.util.List;
 
 @Component
 public class EntityConverter {
-
+    @Autowired
+    private UserService userService;
 
     public UserDTO UserEntityToDto(Users users){
         UserDTO dto = new UserDTO();
@@ -36,7 +39,9 @@ public class EntityConverter {
         dto.setDescription(task.getDescription());
         dto.setDuration(task.getDuration());
         dto.setFinished(task.isFinished());
-
+        if(task.getUsers()!=null) {
+            dto.setUserId(task.getUsers().getId());
+        }
         return dto;
     }
 
@@ -62,7 +67,11 @@ public class EntityConverter {
         task.setDescription(dto.getDescription());
         task.setDuration(dto.getDuration());
         task.setFinished(dto.isFinished());
-
+        if(dto.getUserId()!=null)
+        {
+            UserDTO userDto = userService.findUserById(dto.getUserId());
+            task.setUsers(UserDtoToEntity(userDto));
+        }
         return task;
     }
 

@@ -16,12 +16,14 @@ public class Users {
 
     private Boolean archived;
 
-    @OneToMany(targetEntity = Task.class, cascade = CascadeType.ALL,
-                fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL,
+                fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Task> tasks;
 
-
-    public Users(){}
+    // Construcotr
+    public Users(){
+        // null constructor
+    }
 
     public UUID getId() {
         return id;

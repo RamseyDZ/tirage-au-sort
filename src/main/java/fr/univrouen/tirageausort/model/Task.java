@@ -24,10 +24,11 @@ public class Task {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate = new Date();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id",nullable = true)
     private Users users;
 
-
+    // Constructor
     public Task() {
     }
 

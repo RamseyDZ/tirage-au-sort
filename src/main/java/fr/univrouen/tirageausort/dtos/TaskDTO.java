@@ -1,7 +1,5 @@
 package fr.univrouen.tirageausort.dtos;
 
-import fr.univrouen.tirageausort.model.Users;
-
 import java.util.UUID;
 
 public class TaskDTO {
@@ -9,12 +7,20 @@ public class TaskDTO {
     private String description;
     private boolean isFinished;
     private int duration;
+    private UUID userId;
 
 
     public TaskDTO(){
-
+        // Constructor qui retourne rien
+        // utilisé pour initialisation
     }
 
+    public TaskDTO(UUID idTask, String description, boolean isFinished, int duration) {
+        this.idTask = idTask;
+        this.description = description;
+        this.isFinished = isFinished;
+        this.duration = duration;
+    }
 
     public UUID getIdTask() {
         return idTask;
@@ -46,5 +52,13 @@ public class TaskDTO {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }
