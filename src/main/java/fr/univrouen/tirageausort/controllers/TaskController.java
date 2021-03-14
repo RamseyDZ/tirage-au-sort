@@ -147,14 +147,17 @@ public class TaskController {
             UUID uuidTask = UUID.fromString(id);
             // à modifier en ajoutant la valeur retourner lors la mise à jour
             TaskDTO taskDTO = taskService.assignedTask(uuidTask, userDTO);
-
-            if (taskDTO!=null && userDTO!=null && userService.findUserById(userDTO.getIdUser())!=null)
+            if( userDTO==null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            else if (taskDTO!=null  && userService.findUserById(userDTO.getIdUser())!=null)
             {
-                if(!taskDTO.isFinished()) {
+                if(!taskDTO.isFinished() && taskDTO.getUserId()!=null) {
                     return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
-                } // if task has finished we will not update it
+                } // if task has a user and finished we will not update it directly
                 else {
-                    return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(taskDTO);
+                    System.out.println(taskDTO.getDescription());
+                    return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
                 }
             }
             else {
@@ -164,6 +167,22 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
+    }
+
+    @PutMapping(value = "/unassign/{id}")
+    public ResponseEntity<TaskDTO> unAssignTask(@PathVariable String id) {
+        try {
+            UUID uuidTask = UUID.fromString(id);
+            // à modifier en ajoutant la valeur retourner lors la mise à jour
+            TaskDTO taskDTO = taskService.unAssignedTask(uuidTask);
+            if (taskDTO != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(taskDTO);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
 

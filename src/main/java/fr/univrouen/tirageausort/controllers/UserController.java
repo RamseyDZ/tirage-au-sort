@@ -31,6 +31,18 @@ public class UserController {
 
     }
 
+    @GetMapping(value = "/allactive")
+    public ResponseEntity<List<UserDTO>> getAllActiveUsers(){
+        try {
+            List<UserDTO> allUsers = userService.findAllActiveUsers();
+            return ResponseEntity.status(HttpStatus.OK).body(allUsers);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+    }
+
     @GetMapping(value="/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id){
         try {
@@ -55,10 +67,10 @@ public class UserController {
 
 
             List<UserDTO> userList = userService.findUserByName(name);
-            if (userList!=null)
+            if (!userList.isEmpty())
                 return ResponseEntity.status(HttpStatus.OK).body(userList);
             else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userList);
         }
         catch (ExceptionInInitializerError e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -71,10 +83,22 @@ public class UserController {
     @PostMapping(value = "/save")
     public ResponseEntity<UserDTO> addUser(@RequestBody UserDTO dto){
         try{
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.addUser(dto));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(dto));
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+    }
+
+    @PutMapping(value = "/save/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO dto){
+        try{
+            UUID idUser = UUID.fromString(id);
+            return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(dto, idUser));
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
     }
@@ -82,12 +106,13 @@ public class UserController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<UserDTO> deleteUser(@PathVariable UUID id){
         try{
-            UserDTO dto = userService.findUserById(id);
-            if (dto!=null) {
-                userService.deleteUserById(id);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(dto);
+            Integer result = userService.deleteUserById(id);
+            switch (result) {
+                case 0: return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.findUserById(id));
+                case 1: return ResponseEntity.status(HttpStatus.OK).body(null);
+                case 2: return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
+                default: return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
-            else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

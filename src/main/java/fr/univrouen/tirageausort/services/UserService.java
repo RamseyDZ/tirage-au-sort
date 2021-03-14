@@ -2,16 +2,14 @@ package fr.univrouen.tirageausort.services;
 
 import fr.univrouen.tirageausort.converter.EntityConverter;
 import fr.univrouen.tirageausort.dtos.UserDTO;
+import fr.univrouen.tirageausort.model.Task;
 import fr.univrouen.tirageausort.model.Users;
 import fr.univrouen.tirageausort.repositories.UserRepository;
 import fr.univrouen.tirageausort.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService implements IUserService {
@@ -22,15 +20,11 @@ public class UserService implements IUserService {
     @Override
     public UserDTO findUserById(UUID userId) {
         Optional<Users> user = userRepository.findById(userId);
-        System.out.println("UUID utilisateur : "+userId);
         if (user.isPresent()){
-            System.out.println("Utilisateur trouvé !!!!! ");
             Users users = user.get();
-            UserDTO userDto = entityConverter.userEntityToDto(users);
-            return userDto;
+            return entityConverter.userEntityToDto(users);
         }
         else {
-            System.out.println("Rieeeeen !!!!! ");
             return null;
         }
     }
@@ -44,13 +38,23 @@ public class UserService implements IUserService {
             for (Users user : allUsers) {
                 UserDTO userDto = entityConverter.userEntityToDto(user);
                 allUsersDto.add(userDto);
-                System.out.println(user.getId());
-
             }
             return allUsersDto;
         }
         else
-            return null;
+            return Collections.emptyList();
+    }
+
+    @Override
+    public List<UserDTO> findAllActiveUsers() {
+        List<UserDTO> allUsers = findAllUsers();
+        if (!allUsers.isEmpty()) {
+            for (UserDTO userDto : allUsers) {
+                if (userDto.isArchived()) {
+                    allUsers.remove(userDto);
+                }            }
+        }
+        return allUsers;
     }
 
     @Override
@@ -71,23 +75,68 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void deleteUserById(UUID userId) {
-        userRepository.deleteById(userId);
+    public UserDTO updateUser(UserDTO userDto, UUID idUser) {
+        try {
+            Optional<Users> userById = userRepository.findById(idUser);
+            if(userById.isPresent()) {
+                Users users = userById.get();
+
+                if (userDto.getName()!=null)
+                    users.setName(userDto.getName());
+                Users result = userRepository.save(users);
+                return entityConverter.userEntityToDto(result);
+            }
+            return null; 
+        }
+        catch(ExceptionInInitializerError e) {
+            return null;
+        }
+    }
+
+    /**
+     * a function for deleting a user
+     * @param userId
+     * @return -1 if user don't exist or not free, 0 if user archived, 1 if user is deleted
+     */
+    @Override
+    public Integer deleteUserById(UUID userId) {
+        Optional<Users> usersOptional = userRepository.findById(userId);
+        if(usersOptional.isPresent()) {
+            Users users = usersOptional.get();
+            if (!users.getTaskList().isEmpty()) {
+                boolean free = true;
+                for (Task task : users.getTaskList()) {
+                    if (!task.isFinished())
+                    {
+                        free = false;
+                    }
+                }
+                if (free) {
+                    users.setArchived(true);
+                    userRepository.save(users);
+                    return 0;
+                } else
+                    return 2;
+            }
+            // sinon supprimer
+            else {
+                userRepository.deleteById(userId);
+                return 1;
+            }
+        }
+        return -1;
     }
 
     @Override
     public List<UserDTO> findUserByName(String name) {
-        List<Users> userList = userRepository.getByName(name);
+        List<Users> userList = userRepository.getByNameContaining(name);
         if(userList!=null){
-            System.out.println("Utilisateur trouvé !!!!! ");
             List<UserDTO> listUserDto = new ArrayList<>();
             for (Users user:userList) {
                 listUserDto.add(entityConverter.userEntityToDto(user));
             }
             return listUserDto;
         }
-        else {
-            System.out.println("Rieeeeen !!!!! ");}
-            return null;
-        }
+        return Collections.emptyList();
+    }
 }

@@ -144,7 +144,7 @@ public class TaskService implements ITaskService {
         Optional<Users> userOptional = userRepository.findById(userDTO.getIdUser());
         if (taskOptional.isPresent() && userOptional.isPresent()){
             Task task = taskOptional.get();
-            if(!task.isFinished()) {
+            if(task.getUsers()==null && !task.isFinished()) {
                 task.setUsers(userOptional.get());
             }
             return entityConverter.taskEntityToDto(taskRepository.save(task));
@@ -152,6 +152,15 @@ public class TaskService implements ITaskService {
         return null;
     }
 
-
-    // Task occupée par un utilisateur
+    public TaskDTO unAssignedTask(UUID uuidTask) {
+        Optional<Task> taskOptional = taskRepository.findById(uuidTask);
+        if (taskOptional.isPresent() ){
+            Task task = taskOptional.get();
+            if(!task.isFinished()) {
+                task.setUsers(null);
+                return entityConverter.taskEntityToDto(taskRepository.save(task));
+            }
+        }
+        return null;
+    }
 }

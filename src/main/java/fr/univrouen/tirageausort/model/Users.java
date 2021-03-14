@@ -56,4 +56,12 @@ public class Users {
     public void setFree(Boolean free) {
         this.free = free;
     }
+
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
 }

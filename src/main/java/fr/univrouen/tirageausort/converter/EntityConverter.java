@@ -22,6 +22,7 @@ public class EntityConverter {
         dto.setIdUser(users.getId());
         dto.setName(users.getName());
         dto.setFree(users.isFree());
+        dto.setArchived(users.getArchived());
         List<TaskDTO> tasksDto = new ArrayList<>();
         List<Task> taskList = users.getTaskList();
         if(taskList!=null) {
