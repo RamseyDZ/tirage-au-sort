@@ -13,13 +13,17 @@ public interface ITaskService {
 
     List<TaskDTO> findFreeTasks();
 
+    List<TaskDTO> findFinishedTasks();
+
+    List<TaskDTO> findInProgressTasks();
+
     int countTasks();
 
     TaskDTO addTask(TaskDTO taskDTO);
 
     Boolean deleteTaskById(UUID idTask);
 
-    TaskDTO updateTask(TaskDTO taskDTO);
+    TaskDTO updateTask(TaskDTO taskDTO, String id);
 
     // task finished  :
     /**

@@ -26,7 +26,7 @@ public class UserService implements IUserService {
         if (user.isPresent()){
             System.out.println("Utilisateur trouvé !!!!! ");
             Users users = user.get();
-            UserDTO userDto = entityConverter.UserEntityToDto(users);
+            UserDTO userDto = entityConverter.userEntityToDto(users);
             return userDto;
         }
         else {
@@ -42,7 +42,7 @@ public class UserService implements IUserService {
             List<UserDTO> allUsersDto = new ArrayList<>();
 
             for (Users user : allUsers) {
-                UserDTO userDto = entityConverter.UserEntityToDto(user);
+                UserDTO userDto = entityConverter.userEntityToDto(user);
                 allUsersDto.add(userDto);
                 System.out.println(user.getId());
 
@@ -61,9 +61,9 @@ public class UserService implements IUserService {
     @Override
     public UserDTO addUser(UserDTO userDto) {
         try {
-            Users users = entityConverter.UserDtoToEntity(userDto);
+            Users users = entityConverter.userDtoToEntity(userDto);
             Users result = userRepository.save(users);
-            return entityConverter.UserEntityToDto(result);
+            return entityConverter.userEntityToDto(result);
         }
         catch(ExceptionInInitializerError e) {
             return null;
@@ -82,7 +82,7 @@ public class UserService implements IUserService {
             System.out.println("Utilisateur trouvé !!!!! ");
             List<UserDTO> listUserDto = new ArrayList<>();
             for (Users user:userList) {
-                listUserDto.add(entityConverter.UserEntityToDto(user));
+                listUserDto.add(entityConverter.userEntityToDto(user));
             }
             return listUserDto;
         }

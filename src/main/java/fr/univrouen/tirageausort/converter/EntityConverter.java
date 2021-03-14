@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -16,7 +17,7 @@ public class EntityConverter {
     @Autowired
     private UserService userService;
 
-    public UserDTO UserEntityToDto(Users users){
+    public UserDTO userEntityToDto(Users users){
         UserDTO dto = new UserDTO();
         dto.setIdUser(users.getId());
         dto.setName(users.getName());
@@ -25,7 +26,7 @@ public class EntityConverter {
         List<Task> taskList = users.getTaskList();
         if(taskList!=null) {
             for (Task task : taskList) {
-                tasksDto.add(TaskEntityToDto(task));
+                tasksDto.add(taskEntityToDto(task));
             }
         }
         dto.setTasks(tasksDto);
@@ -33,7 +34,7 @@ public class EntityConverter {
         return dto;
     }
 
-    public TaskDTO TaskEntityToDto(Task task){
+    public TaskDTO taskEntityToDto(Task task){
         TaskDTO dto = new TaskDTO();
         dto.setIdTask(task.getId());
         dto.setDescription(task.getDescription());
@@ -45,7 +46,7 @@ public class EntityConverter {
         return dto;
     }
 
-    public Users UserDtoToEntity(UserDTO dto){
+    public Users userDtoToEntity(UserDTO dto){
         Users users = new Users();
         users.setId(dto.getIdUser());
         users.setName(dto.getName());
@@ -54,14 +55,14 @@ public class EntityConverter {
         if (tasksDto!=null) {
             List<Task> tasks = new ArrayList<>();
             for (TaskDTO tDto : tasksDto) {
-                tasks.add(TaskDtoToEntity(tDto));
+                tasks.add(taskDtoToEntity(tDto));
             }
             users.setTaskList(tasks);
         }
         return users;
     }
 
-    public Task TaskDtoToEntity(TaskDTO dto){
+    public Task taskDtoToEntity(TaskDTO dto){
         Task task = new Task();
         task.setId(dto.getIdTask());
         task.setDescription(dto.getDescription());
@@ -70,21 +71,21 @@ public class EntityConverter {
         if(dto.getUserId()!=null)
         {
             UserDTO userDto = userService.findUserById(dto.getUserId());
-            task.setUsers(UserDtoToEntity(userDto));
+            task.setUsers(userDtoToEntity(userDto));
         }
         return task;
     }
 
-    public List<TaskDTO> TaskEntityToDto (List<Task> taskList) {
+    public List<TaskDTO> taskEntityToDto(List<Task> taskList) {
 
         if(!taskList.isEmpty()){
             List<TaskDTO> listDto = new ArrayList<>();
             for (Task taskEntity: taskList) {
-                listDto.add(TaskEntityToDto(taskEntity));
+                listDto.add(taskEntityToDto(taskEntity));
             }
             return listDto;
 
         }
-        return null;
+        return Collections.emptyList();
     }
 }

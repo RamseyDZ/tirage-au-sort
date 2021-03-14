@@ -5,7 +5,6 @@ import fr.univrouen.tirageausort.dtos.UserDTO;
 import fr.univrouen.tirageausort.services.TaskService;
 import fr.univrouen.tirageausort.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -87,11 +86,36 @@ public class TaskController {
         }
     }
 
-    @PutMapping(value = "/save/{id}")
-    public ResponseEntity<TaskDTO> updateTask(@PathVariable String id, TaskDTO taskDTO){
+    @GetMapping(value = "/all/finished")
+    public ResponseEntity<List<TaskDTO>> getAllFinishedTasks(){
         try{
-            // à modifier en ajoutant la valeur retourner lors la mise à jour
-            TaskDTO resultDto = taskService.updateTask(taskDTO);
+            List<TaskDTO> taskDTOFreeList =  taskService.findFinishedTasks();
+            if(taskDTOFreeList.isEmpty())
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(taskDTOFreeList);
+            return ResponseEntity.status(HttpStatus.OK).body(taskDTOFreeList);
+        }catch (ExceptionInInitializerError e)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @GetMapping(value = "/all/progress")
+    public ResponseEntity<List<TaskDTO>> getAllInProgressTasks(){
+        try{
+            List<TaskDTO> taskDTOFreeList =  taskService.findInProgressTasks();
+            if(taskDTOFreeList.isEmpty())
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(taskDTOFreeList);
+            return ResponseEntity.status(HttpStatus.OK).body(taskDTOFreeList);
+        }catch (ExceptionInInitializerError e)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
+        }
+    }
+
+    @PutMapping(value = "/save/{id}")
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable String id,@RequestBody TaskDTO taskDTO){
+        try{
+            TaskDTO resultDto = taskService.updateTask(taskDTO, id);
             return ResponseEntity.status(HttpStatus.CREATED).body(resultDto);
         }catch(NullPointerException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -126,7 +150,12 @@ public class TaskController {
 
             if (taskDTO!=null && userDTO!=null && userService.findUserById(userDTO.getIdUser())!=null)
             {
-                return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
+                if(!taskDTO.isFinished()) {
+                    return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
+                } // if task has finished we will not update it
+                else {
+                    return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(taskDTO);
+                }
             }
             else {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

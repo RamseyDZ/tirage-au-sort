@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value="/user")
-public class userController {
+public class UserController {
     @Autowired
     private IUserService userService;
 
@@ -35,7 +35,6 @@ public class userController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id){
         try {
             UUID userId = UUID.fromString(id);
-            System.out.println(userId);
             UserDTO user = userService.findUserById(userId);
             if (user!=null)
                 return ResponseEntity.status(HttpStatus.OK).body(user);
@@ -98,7 +97,6 @@ public class userController {
     public ResponseEntity<Map<String, Integer>> countUsers(){
         try{
             int nbUsers = userService.getNbUsers();
-            System.out.println(nbUsers);
             return ResponseEntity.status(HttpStatus.OK).body(Collections.singletonMap("count",nbUsers));
         }
         catch (ExceptionInInitializerError e ){
