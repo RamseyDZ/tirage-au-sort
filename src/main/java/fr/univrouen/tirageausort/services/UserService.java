@@ -49,10 +49,7 @@ public class UserService implements IUserService {
     public List<UserDTO> findAllActiveUsers() {
         List<UserDTO> allUsers = findAllUsers();
         if (!allUsers.isEmpty()) {
-            for (UserDTO userDto : allUsers) {
-                if (userDto.isArchived()) {
-                    allUsers.remove(userDto);
-                }            }
+            allUsers.removeIf(UserDTO::isArchived);
         }
         return allUsers;
     }
@@ -86,7 +83,7 @@ public class UserService implements IUserService {
                 Users result = userRepository.save(users);
                 return entityConverter.userEntityToDto(result);
             }
-            return null; 
+            return null;
         }
         catch(ExceptionInInitializerError e) {
             return null;
