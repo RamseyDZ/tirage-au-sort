@@ -47,67 +47,76 @@ public class TaskController {
      * @param taskDTO une instance d'une tâche à enregistré
      */
     @PostMapping(value = "/save")
-    public ResponseEntity<TaskDTO> addUser(@RequestBody TaskDTO taskDTO){
-        try{
+    public ResponseEntity<TaskDTO> addUser(@RequestBody TaskDTO taskDTO) {
+        try {
             TaskDTO dtoAdded = taskService.addTask(taskDTO);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(dtoAdded);
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
 
     }
 
-
+    /**
+     * Supprimer une tâche en passant son id en params
+     *
+     * @param id identifiant d'une tâche à enregistré
+     */
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<Boolean> deleteTask(@PathVariable UUID id){
+    public ResponseEntity<Boolean> deleteTask(@PathVariable UUID id) {
         try {
             Boolean isDeleted = taskService.deleteTaskById(id);
-            if (Boolean.TRUE.equals(isDeleted)) {return ResponseEntity.status(HttpStatus.OK).body(isDeleted) ;}
-            else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(isDeleted);
-        }
-        catch (ExceptionInInitializerError exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null) ;
+            if (Boolean.TRUE.equals(isDeleted)) {
+                return ResponseEntity.status(HttpStatus.OK).body(isDeleted);
+            } else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(isDeleted);
+        } catch (ExceptionInInitializerError exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
+    /**
+     * Récupérer les tâches libres
+     */
     @GetMapping(value = "/all/free")
-    public ResponseEntity<List<TaskDTO>> getAllFreeTasks(){
-        try{
-            List<TaskDTO> taskDTOFreeList =  taskService.findFreeTasks();
+    public ResponseEntity<List<TaskDTO>> getAllFreeTasks() {
+        try {
+            List<TaskDTO> taskDTOFreeList = taskService.findFreeTasks();
 
             if (taskDTOFreeList == null)
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
 
             return ResponseEntity.status(HttpStatus.OK).body(taskDTOFreeList);
-        }catch (ExceptionInInitializerError e)
-        {
+        } catch (ExceptionInInitializerError e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
+    /**
+     * Récupérer les tâches finis
+     */
     @GetMapping(value = "/all/finished")
-    public ResponseEntity<List<TaskDTO>> getAllFinishedTasks(){
-        try{
-            List<TaskDTO> taskDTOFreeList =  taskService.findFinishedTasks();
-            if(taskDTOFreeList.isEmpty())
+    public ResponseEntity<List<TaskDTO>> getAllFinishedTasks() {
+        try {
+            List<TaskDTO> taskDTOFreeList = taskService.findFinishedTasks();
+            if (taskDTOFreeList.isEmpty())
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(taskDTOFreeList);
             return ResponseEntity.status(HttpStatus.OK).body(taskDTOFreeList);
-        }catch (ExceptionInInitializerError e)
-        {
+        } catch (ExceptionInInitializerError e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
+    /**
+     * Récupérer les tâches en cours
+     */
     @GetMapping(value = "/all/progress")
-    public ResponseEntity<List<TaskDTO>> getAllInProgressTasks(){
-        try{
-            List<TaskDTO> taskDTOFreeList =  taskService.findInProgressTasks();
-            if(taskDTOFreeList.isEmpty())
+    public ResponseEntity<List<TaskDTO>> getAllInProgressTasks() {
+        try {
+            List<TaskDTO> taskDTOFreeList = taskService.findInProgressTasks();
+            if (taskDTOFreeList.isEmpty())
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(taskDTOFreeList);
             return ResponseEntity.status(HttpStatus.OK).body(taskDTOFreeList);
-        }catch (ExceptionInInitializerError e)
-        {
+        } catch (ExceptionInInitializerError e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ArrayList<>());
         }
     }
@@ -156,7 +165,6 @@ public class TaskController {
                     return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
                 } // if task has a user and finished we will not update it directly
                 else {
-                    System.out.println(taskDTO.getDescription());
                     return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
                 }
             }
