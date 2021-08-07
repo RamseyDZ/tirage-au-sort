@@ -43,6 +43,7 @@ public class EntityConverter {
         dto.setFinished(task.isFinished());
         if(task.getUsers()!=null) {
             dto.setUserId(task.getUsers().getId());
+            dto.setUserName(task.getUsers().getName());
         }
         return dto;
     }
