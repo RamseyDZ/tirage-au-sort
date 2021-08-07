@@ -8,6 +8,7 @@ public class TaskDTO {
     private boolean isFinished;
     private int duration;
     private UUID userId;
+    private String userName;
 
 
     public TaskDTO(){
@@ -60,5 +61,13 @@ public class TaskDTO {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
